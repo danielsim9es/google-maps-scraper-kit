@@ -20,7 +20,7 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import browser, jobs  # noqa: E402
+import browser, jobs, dashboard_api  # noqa: E402
 
 for _stream in (sys.stdout, sys.stderr):  # ✓ and accented names on a Windows cp1252 console
     try:
@@ -215,6 +215,14 @@ OPENAPI = {
 }
 
 
+OPENAPI["paths"].update({
+    "/api/v1/dashboard": {"get": {"summary": "Consolidated dashboard KPIs, paginated leads and map points. Reads existing local CSV jobs."}},
+    "/api/v1/dashboard/summary": {"get": {"summary": "Filtered summary, categories, coverage and job counts."}},
+    "/api/v1/dashboard/leads": {"get": {"summary": "Filtered, deduplicated and paginated collected businesses."}},
+    "/api/v1/dashboard/geojson": {"get": {"summary": "GeoJSON feature collection, maximum 700 mapped businesses."}},
+    "/api/v1/dashboard/export": {"get": {"summary": "Download filtered CSV or JSON; ?format=csv|json."}},
+})
+
 def docs_page(nonce):
     """/api/docs: OPENAPI as a plain HTML page (no scripts, nothing loaded from elsewhere)."""
     e = html.escape
@@ -373,7 +381,7 @@ progress {{ display: block; width: 100%; max-width: 200px; height: 6px; margin-t
 @media (prefers-reduced-motion: reduce) {{ * {{ transition: none !important; }} }}
 </style></head><body><main>
 <header class="top"><h1>Google Maps Scraper Kit</h1>
-<nav><span class="mono">v{version}</span><a href="/api/docs">API docs</a></nav></header>
+<nav><span class="mono">v{version}</span><a href="/dashboard">Dashboard</a> · <a href="/api/docs">API docs</a></nav></header>
 <div class="update" id="update" role="status" hidden><b>Kit v<span id="up-v"></span> is out</b> (this copy is v{version}).
   <a id="up-link" href="{repo}/releases/latest" target="_blank" rel="noopener">What changed</a> &middot;
   update with <code>bash scripts/update.sh</code>, or <code>docker compose up -d --build</code> in Docker.</div>
@@ -737,7 +745,7 @@ class Handler(BaseHTTPRequestHandler):
             self.fail(403, "requests from other websites are refused")
             return False
         key, path = self.server.api_key, self.path.split("?")[0]
-        if key and path not in ("/", "/api/docs", "/api/openapi.json") and not hmac.compare_digest(
+        if key and path not in ("/", "/dashboard", "/dashboard/", "/dashboard/app.js", "/dashboard/styles.css", "/api/docs", "/api/openapi.json") and not hmac.compare_digest(
                 self.headers.get("X-API-Key", "").encode("latin-1", "replace"), key.encode()):  # headers arrive as latin-1
             self.fail(401, "missing or wrong X-API-Key")
             return False
@@ -782,6 +790,39 @@ class Handler(BaseHTTPRequestHandler):
             return
         path, _, query = self.path.partition("?")
         store = self.server.store
+        if path == "/api/v1/dashboard" or path in (
+                "/api/v1/dashboard/summary", "/api/v1/dashboard/leads",
+                "/api/v1/dashboard/geojson", "/api/v1/dashboard/export"):
+            try:
+                code, data, ctype, headers = dashboard_api.handle(store, path, query)
+            except dashboard_api.InvalidQuery as e:
+                return self.fail(400, str(e))
+            except (OSError, sqlite3.Error, csv.Error) as e:
+                return self.fail(500, "dashboard data could not be read")
+            return self.reply(code, data, ctype, headers)
+        if path in ("/dashboard", "/dashboard/"):
+            path_on_disk = os.path.join(os.path.dirname(__file__), "dashboard", "index.html")
+            try:
+                with open(path_on_disk, "rb") as f:
+                    data = f.read()
+            except OSError:
+                return self.fail(404, "dashboard is not installed")
+            csp = ("default-src 'none'; script-src 'self' https://unpkg.com; "
+                   "style-src 'self' https://unpkg.com; connect-src 'self'; "
+                   "img-src 'self' data: https://*.tile.openstreetmap.org https://unpkg.com; "
+                   "font-src 'self' https://unpkg.com; base-uri 'none'; "
+                   "form-action 'self'; frame-ancestors 'none'")
+            return self.reply(200, data, "text/html; charset=utf-8", [("Content-Security-Policy", csp)])
+        if path in ("/dashboard/app.js", "/dashboard/styles.css"):
+            name = path.rsplit("/", 1)[-1]
+            file_path = os.path.join(os.path.dirname(__file__), "dashboard", name)
+            try:
+                with open(file_path, "rb") as f:
+                    data = f.read()
+            except OSError:
+                return self.fail(404, "dashboard asset not found")
+            ctype = "application/javascript; charset=utf-8" if name.endswith(".js") else "text/css; charset=utf-8"
+            return self.reply(200, data, ctype)
         if path == "/api/v1/jobs":  # null when empty, as before: the docs' health check
             return self.reply(200, [jobs.public(j) for j in store.all()] or None)
         m = JOB_PATH.match(path)

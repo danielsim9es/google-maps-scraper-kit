@@ -1,0 +1,25 @@
+name: prospect-intelligence
+on:
+  push:
+    branches: [master]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  dashboard-offline:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.9', '3.12', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Validate dashboard Python files
+        run: python -m py_compile engine/dashboard_api.py scripts/install_dashboard_patch.py
+      - name: Run offline dashboard tests
+        run: python engine/test_dashboard.py
+      - name: Validate browser JavaScript
+        run: node --check engine/dashboard/app.js
