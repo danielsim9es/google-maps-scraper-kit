@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Prospect Intelligence: painel local de pesquisa comercial com KPIs, mapa e exportação de leads reais.">
+  <title>Prospect Intelligence | Google Maps Scraper Kit</title>
+  <link rel="stylesheet" href="/dashboard/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="/dashboard/app.js"></script>
+</head>
+<body>
+<svg aria-hidden="true" class="sprite" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a4 4 0 0 1 0 8m1 3a6 6 0 0 1 4 6"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16M7 12h10m-7 7h4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a16 16 0 0 1 0 18M12 3a16 16 0 0 0 0 18"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="m7 3 4 4-3 3a16 16 0 0 0 6 6l3-3 4 4-2 4C10 21 3 14 3 5z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9a7.5 7.5 0 0 1 13-2L20 12M4 12l1.5 5a7.5 7.5 0 0 0 13-2"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.8-5.4 2.8 1-6-4.4-4.3 6.1-.9z"/></symbol>
+</svg>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/dashboard" aria-label="Prospect Intelligence: início">
+      <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+      <span><strong>PROSPECT<span class="brand-accent">.</span></strong><small>INTELLIGENCE SUITE</small></span>
+    </a>
+    <div class="sidebar-block">
+      <p class="sidebar-label">WORKSPACE</p>
+      <nav aria-label="Menu principal">
+        <a href="/dashboard" class="nav-link active" aria-current="page"><svg class="ico"><use href="#i-grid"/></svg> Visão geral <span class="nav-caret">›</span></a>
+        <a href="#map-panel" class="nav-link"><svg class="ico"><use href="#i-map"/></svg> Mapa de oportunidades</a>
+        <a href="#leads-panel" class="nav-link"><svg class="ico"><use href="#i-users"/></svg> Base de leads</a>
+        <a href="#jobs-panel" class="nav-link"><svg class="ico"><use href="#i-activity"/></svg> Coletas &amp; atividades</a>
+      </nav>
+    </div>
+    <div class="sidebar-block sidebar-divider">
+      <p class="sidebar-label">FERRAMENTAS</p>
+      <nav aria-label="Ferramentas">
+        <a class="nav-link" href="/" target="_self"><svg class="ico"><use href="#i-search"/></svg> Coletor original</a>
+        <a class="nav-link" href="/api/docs"><svg class="ico"><use href="#i-globe"/></svg> API &amp; documentação</a>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="system-card"><span class="status-indicator"></span><div><strong>Engine local</strong><small id="engine-status">Conectando...</small></div></div>
+      <div class="sidebar-foot"><span>GMSKIT / FORK EDITION</span><span>01</span></div>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="breadcrumbs"><span>Workspace</span><span class="crumb-divider">/</span><strong>Visão geral</strong></div>
+      <div class="top-actions"><span class="local-pill"><span class="status-indicator"></span> AMBIENTE LOCAL</span><button class="icon-button" id="refresh-btn" title="Atualizar dados" aria-label="Atualizar dados"><svg class="ico"><use href="#i-refresh"/></svg></button><button id="top-create" class="button button-primary"><svg class="ico"><use href="#i-plus"/></svg> Nova pesquisa</button></div>
+    </header>
+    <main class="main-content">
+      <section class="page-head">
+        <div class="heading-copy"><p class="eyebrow"><span class="accent-dash"></span> MARKET INTELLIGENCE / 001</p><h1>Visão geral <span>das oportunidades<span class="dot">.</span></span></h1><p class="subtitle">Transforme dados públicos coletados em oportunidades comerciais organizadas.</p></div>
+        <div class="head-controls"><button class="button button-ghost" id="export-json"><svg class="ico"><use href="#i-download"/></svg> JSON</button><button class="button button-outline" id="export-csv"><svg class="ico"><use href="#i-download"/></svg> Exportar CSV</button></div>
+      </section>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <section class="kpis" aria-label="Indicadores de prospecção">
+        <article class="kpi kpi-primary"><div class="kpi-head"><span>EMPRESAS ENCONTRADAS</span><svg class="ico"><use href="#i-users"/></svg></div><div class="kpi-value" id="kpi-total">—</div><p class="kpi-foot"><span class="kpi-pulse"></span> Base consolidada sem duplicatas</p><div class="kpi-decor"></div></article>
+        <article class="kpi"><div class="kpi-head"><span>CONTATOS COM E-MAIL</span><svg class="ico"><use href="#i-mail"/></svg></div><div class="kpi-value" id="kpi-email">—</div><p class="kpi-foot"><span class="tag-positive" id="email-pct">—%</span> das empresas filtradas</p></article>
+        <article class="kpi"><div class="kpi-head"><span>TELEFONES CAPTURADOS</span><svg class="ico"><use href="#i-phone"/></svg></div><div class="kpi-value" id="kpi-phone">—</div><p class="kpi-foot"><span class="tag-positive" id="phone-pct">—%</span> de cobertura de telefone</p></article>
+        <article class="kpi"><div class="kpi-head"><span>SITES IDENTIFICADOS</span><svg class="ico"><use href="#i-globe"/></svg></div><div class="kpi-value" id="kpi-web">—</div><p class="kpi-foot"><span class="small-square"></span> <span id="kpi-rating">—</span> avaliação média dos avaliados</p></article>
+      </section>
+      <div class="insights-grid">
+        <section class="panel map-panel" id="map-panel" aria-labelledby="map-heading"><header class="panel-header"><div><p class="panel-caption">INTELIGÊNCIA GEOGRÁFICA</p><h2 id="map-heading">Mapa de oportunidades</h2></div><span class="map-counter"><span class="status-indicator"></span><span id="map-count">0</span> localizadas</span></header><div class="map-shell"><div id="map" role="region" aria-label="Mapa interativo de empresas coletadas"></div><div id="map-empty" class="map-empty" hidden><svg class="ico"><use href="#i-map"/></svg><strong>Nenhuma localização disponível</strong><p>Execute uma coleta ou ajuste os filtros para visualizar empresas no mapa.</p></div></div><footer class="map-footer"><span>Base cartográfica © OpenStreetMap contributors</span><span>Até 700 pontos por visualização</span></footer></section>
+        <section class="panel segment-panel" aria-labelledby="segments-heading"><header class="panel-header"><div><p class="panel-caption">ANÁLISE DE MERCADO</p><h2 id="segments-heading">Segmentos em destaque</h2></div><span class="panel-badge">TOP 7</span></header><div id="category-chart" class="category-chart"><p class="empty-mini">Aguardando dados de coleta.</p></div><div class="segment-bottom"><div class="segment-divider"></div><p class="panel-caption">QUALIDADE DAS AVALIAÇÕES</p><div id="rating-chart" class="rating-chart"></div><div class="rating-axis"><span>1 estrela</span><span>5 estrelas</span></div></div></section>
+      </div>
+      <section class="panel lead-panel" id="leads-panel" aria-labelledby="lead-heading"><header class="panel-header leads-header"><div><p class="panel-caption">BASE COMERCIAL</p><h2 id="lead-heading">Empresas &amp; contatos <span id="table-count" class="heading-count">0</span></h2></div><div class="table-actions"><button class="button button-minimal" id="clear-filters">Limpar filtros</button></div></header>
+        <form id="filters" class="filters" autocomplete="off">
+          <label class="search-field"><svg class="ico"><use href="#i-search"/></svg><input id="q" aria-label="Pesquisar empresas" placeholder="Buscar nome, bairro, contato..." maxlength="120"></label>
+          <label class="filter-field"><span>Segmento</span><select id="category" aria-label="Filtrar por segmento"><option value="">Todos os segmentos</option></select></label>
+          <label class="filter-field"><span>Coleta</span><select id="job" aria-label="Filtrar por coleta"><option value="">Todas as coletas</option></select></label>
+          <label class="filter-field rating-filter"><span>Avaliação</span><select id="min-rating" aria-label="Avaliação mínima"><option value="0">Qualquer nota</option><option value="3">3,0+</option><option value="4">4,0+</option><option value="4.5">4,5+</option></select></label>
+          <div class="quick-filters" role="group" aria-label="Filtros de disponibilidade"><label><input type="checkbox" id="only-email"> Com e-mail</label><label><input type="checkbox" id="only-phone"> Com telefone</label><label><input type="checkbox" id="only-web"> Com site</label></div>
+        </form>
+        <div class="table-scroll"><table class="leads-table"><thead><tr><th>EMPRESA</th><th>SEGMENTO / ENDEREÇO</th><th>CONTATO</th><th>AVALIAÇÃO</th><th>WEBSITE</th></tr></thead><tbody id="leads-body"><tr><td colspan="5" class="table-empty">Carregando informações...</td></tr></tbody></table></div>
+        <footer class="table-footer"><div class="table-meta" id="table-meta">—</div><div class="pagination"><label class="sort-label">Ordenar: <select id="sort" aria-label="Ordenação"><option value="newest">Mais recentes</option><option value="rating">Melhor avaliação</option><option value="reviews">Mais avaliações</option><option value="name">Nome A–Z</option></select></label><button id="prev" class="page-arrow" aria-label="Página anterior" disabled>‹</button><span id="page-label">1 / 1</span><button id="next" class="page-arrow" aria-label="Próxima página" disabled>›</button></div></footer>
+      </section>
+      <section class="panel jobs-panel" id="jobs-panel" aria-labelledby="jobs-heading"><header class="panel-header"><div><p class="panel-caption">OPERAÇÃO</p><h2 id="jobs-heading">Atividade de coleta</h2></div><button class="button button-minimal" id="jobs-new">+ Iniciar coleta</button></header><div id="jobs-list" class="job-list"><p class="empty-mini">Aguardando coletas.</p></div></section>
+      <footer class="content-foot"><span>PROSPECT INTELLIGENCE / BY GOOGLE MAPS SCRAPER KIT</span><span>Dados reais • Processamento local • Consulte as regras aplicáveis à coleta e ao uso de dados</span></footer>
+    </main>
+  </div>
+</div>
+<dialog id="new-search-dialog" aria-labelledby="dialog-heading"><div class="dialog-head"><div><p class="panel-caption">NOVA OPERAÇÃO</p><h2 id="dialog-heading">Iniciar coleta</h2><p>O motor original realiza a pesquisa e alimenta o dashboard automaticamente.</p></div><button id="dialog-close" class="icon-button" aria-label="Fechar"><svg class="ico"><use href="#i-close"/></svg></button></div><form id="new-search-form"><label>Segmento ou palavra-chave<input id="search-keyword" maxlength="150" placeholder="Ex.: Clínicas odontológicas" required></label><label>Cidade <small>(escolha uma sugestão)</small><input id="search-city" maxlength="100" placeholder="Ex.: São Paulo" required autocomplete="off"></label><div id="city-suggestions" class="city-suggestions" hidden></div><div class="form-row"><label>Profundidade<select id="search-depth"><option value="2">2 — inicial</option><option value="5" selected>5 — padrão</option><option value="8">8 — ampliada</option></select></label><label>Limite de tempo<select id="search-time"><option value="300">5 minutos</option><option value="600" selected>10 minutos</option><option value="1200">20 minutos</option></select></label></div><div class="form-checks"><label><input type="checkbox" id="search-emails" checked> Coletar e-mails</label><label><input type="checkbox" id="search-socials" checked> Buscar redes sociais</label></div><p id="create-msg" role="status" class="create-msg"></p><div class="dialog-actions"><button id="dialog-cancel" type="button" class="button button-ghost">Cancelar</button><button id="dialog-submit" type="submit" class="button button-primary"><svg class="ico"><use href="#i-arrow"/></svg> Iniciar pesquisa</button></div></form></dialog>
+<dialog id="key-dialog" aria-labelledby="key-heading"><div class="dialog-head"><div><p class="panel-caption">ACESSO SEGURO</p><h2 id="key-heading">Chave da API</h2><p>Este motor exige SCRAPER_API_KEY. A chave permanece neste navegador.</p></div></div><form id="key-form"><label>Chave de acesso<input id="key-input" type="password" required autocomplete="off"></label><div class="dialog-actions"><button type="submit" class="button button-primary">Conectar ao motor</button></div></form></dialog>
+</body>
+</html>

@@ -486,3 +486,19 @@ Contributions: [CONTRIBUTING.md](CONTRIBUTING.md). Security reports: [SECURITY.m
 ## License
 
 Built by [Mahan](https://github.com/Mahanaicoach). MIT licensed. Third-party components: [CREDITS.md](CREDITS.md).
+
+
+---
+
+## Prospect Intelligence — dashboard do fork
+
+Este fork acrescenta um painel de prospecção em português sem substituir o coletor original.
+Após iniciar o motor com `python3 scripts/engine.py start`, abra
+**http://localhost:8080/dashboard** (ou ajuste a porta de acordo com `.env`).
+O painel agrega apenas resultados reais dos trabalhos locais, com filtros, mapa (Leaflet/OSM),
+KPIs, relatórios e exportação CSV/JSON. O motor de coleta e sua API continuam funcionando.
+Documentação completa: [docs/dashboard.md](docs/dashboard.md).
+
+A coleta pode contrariar os termos da Google. Respeite LGPD, limitações do serviço,
+consentimento e direitos de titulares. O mapa carrega recursos externos da Leaflet e
+tiles do OpenStreetMap quando a conexão à internet está disponível.
