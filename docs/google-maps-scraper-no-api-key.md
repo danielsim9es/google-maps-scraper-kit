@@ -1,56 +1,29 @@
-# Google Maps scraper without an API key
+# Google Maps Scraper Kit sem chave de API do Google
 
-The Google Maps Scraper Kit is a free, local Google Maps scraper that needs no API key, no Places API and no Google Cloud account.
-It drives a headless browser against the public Google Maps site and returns a CSV of business leads, with no quota and no billing.
+O motor automatiza um navegador para consultar a interface pública do Google Maps. Por isso, a execução básica **não exige uma chave da API oficial do Google Maps** nem uma conta em serviço de scraping por assinatura.
 
-## Why no API key is needed
+Isso **não significa acesso ilimitado ou autorizado pelo Google**: o site pode restringir volume, alterar seu comportamento e impor regras próprias de uso.
 
-The kit never calls the Google Maps Platform or the Places API. So there is no key to create and no API quota or billing to manage.
-
-Instead, the engine opens Google Maps the way a browser does. The engine is the kit's own, in `engine/`: Python and a headless Chrome on your own machine. It searches, scrolls the result list and reads the listings Google Maps sends the page. The kit then trims the output to the 8 lead fields: name, phone, email, website, category, address, rating and review count. Review counts work headless: each tab uses Chrome's user agent with `HeadlessChrome` replaced by `Chrome` ([SETUP §3](../SETUP.md#review-counts-hours-and-reviews)).
-
-City names are turned into coordinates by OpenStreetMap Nominatim, which is free and also needs no key.
-
-## Run it
+## Começando
 
 ```bash
-git clone https://github.com/Mahanaicoach/google-maps-scraper-kit.git
+git clone https://github.com/danielsim9es/google-maps-scraper-kit.git
 cd google-maps-scraper-kit
 python3 scripts/engine.py start
-python3 scripts/scrape.py "plumbers in Phoenix AZ" --city "Phoenix, AZ" --depth 5
+python3 scripts/scrape.py "salões de beleza em Santos" --city "Santos, SP" --lang pt --country br
 ```
 
-You need Python 3.9 or newer (standard library only) and Google Chrome, Chromium, Edge or Brave. With no browser installed, `engine.py start` downloads Chrome for Testing once, about 100 MB, pinned by SHA-256. Prefer Docker? `docker compose up -d` runs the same engine in a container instead of the `engine.py` line. The engine API listens on `127.0.0.1` only, so it is reachable only from your machine.
+O resultado final é escrito em CSV por padrão. É possível abrir a interface no endereço `http://localhost:8080/` e o painel de análise em `http://localhost:8080/dashboard`.
 
-## Example output
+## Qual é o custo?
 
-Illustrative rows only:
+Não há cobrança do kit por consulta, mas seu uso envolve recursos da máquina, conexão com a internet e eventualmente proxies, hospedagem ou serviços opcionais. O navegador pode usar CPU, memória e espaço em disco.
 
-| title | phone | emails | website | address | review_rating |
-|---|---|---|---|---|---|
-| Example Plumbing Co | +1 602-555-0101 | service@example.com | example.com | 100 Main St, Phoenix, AZ | 4.8 |
-| Sample Drain Pros | +1 602-555-0102 | info@example.org | example.org | 200 Central Ave, Phoenix, AZ | 4.5 |
-| Demo Pipe Repair | +1 602-555-0103 |  | example.net | 300 Van Buren St, Phoenix, AZ | 4.2 |
+## Limitações e responsabilidade
 
-## What no API key means for cost
+- O Google pode limitar ou interromper o acesso automatizado.
+- Os resultados podem não incluir todos os estabelecimentos de uma região.
+- A busca de e-mails e redes sociais depende dos sites das empresas.
+- A inexistência de uma chave não substitui os termos da plataforma nem a LGPD.
 
-- No quota. There is no daily request allowance to run out of.
-- No billing. There are no credits, subscriptions or per-result charges. The kit and its engine are MIT licensed.
-- No account. You do not sign in to Google or to any SaaS to run a scrape.
-- No data leaving your machine. Results are saved as local files and are git-ignored.
-
-## The trade-off
-
-Skipping the API also skips its guarantees. These are the limits you accept instead.
-
-- Google can rate-limit you. Heavy use without proxies can get your IP temporarily rate-limited for minutes to hours. Your Google account is not affected.
-- Add proxies for large or repeated runs: `--proxy` takes `http`, `https`, `socks5` or `socks5h` URLs, with `user:pass@` on `http` and `https` only. Repeat it and the keywords take turns; a keyword Google refuses is retried through the next proxy.
-- Google Maps stops at about 120 listings per search. Add `--grid 3` to split the city into 9 map tiles, with duplicates removed.
-- Emails appear only when a business publishes one on its website.
-- Scraping Google Maps is against Google's Terms of Service, so read [Responsible use](../README.md#responsible-use) before you run large jobs.
-
-## Related
-
-- [Google Maps scraper in Python](google-maps-scraper-python.md)
-- [Scrape Google Maps leads with Claude Code](scrape-google-maps-leads-with-claude-code.md)
-- [Kit README](../README.md)
+Para uma solução contratualmente licenciada ou que exija disponibilidade formal, compare com APIs oficiais e provedores autorizados. Consulte [comparativo](best-google-maps-scrapers.md) e [instalação](../SETUP.md).

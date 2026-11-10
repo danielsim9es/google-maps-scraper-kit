@@ -1,17 +1,30 @@
-# Guides and recipes
+# Guias e receitas em português
 
-Short guides for the Google Maps Scraper Kit. Each page covers one task with the exact commands. Start with the [kit README](../README.md) for setup.
+Documentação funcional do [Google Maps Scraper Kit](../README.md) e do dashboard Prospect Intelligence.
 
-## Guides
+## Comece por aqui
 
-- [Google Maps email scraper](google-maps-email-scraper.md): for anyone who needs contact emails and wants to know how the kit finds them.
-- [Google Maps scraper in Python](google-maps-scraper-python.md): for terminal users who want every flag of the CLI in one table.
-- [Google Maps scraper without an API key](google-maps-scraper-no-api-key.md): for anyone avoiding Places API keys, quotas and billing.
-- [Scrape Google Maps leads with Claude Code](scrape-google-maps-leads-with-claude-code.md): for people who want an AI agent to run the scrape for them.
-- [Best open-source Google Maps scrapers on GitHub](best-google-maps-scrapers.md): the kit against gosom, omkarcloud and four more repos, with measured numbers and sources, checked 2026-11-01.
+- [Instalação e configuração](../SETUP.md)
+- [Dashboard Prospect Intelligence](dashboard.md)
+- [CLI Python: comandos e parâmetros](google-maps-scraper-python.md)
+- [Pesquisa sem chave de API](google-maps-scraper-no-api-key.md)
+- [Como encontrar e-mails de empresas](google-maps-email-scraper.md)
+- [Uso com Claude Code e agentes](scrape-google-maps-leads-with-claude-code.md)
+- [Comparação com outras ferramentas](best-google-maps-scrapers.md)
 
-## Recipes
+## Exemplos por segmento
 
-- [Dentist leads](recipes/dentist-leads.md): for agencies and vendors selling to dental practices.
-- [Roofing contractor leads](recipes/roofing-contractor-leads.md): for anyone selling to roofers and running several search terms in one job.
-- [Restaurant leads](recipes/restaurant-leads.md): for anyone selling to restaurants, cafes and pizza places.
+- [Consultórios e clínicas odontológicas](recipes/dentist-leads.md)
+- [Restaurantes](recipes/restaurant-leads.md)
+- [Empresas de coberturas e telhados](recipes/roofing-contractor-leads.md)
+
+Os exemplos usam consultas ilustrativas e **não** representam leads reais. Os dados de saída são obtidos somente após executar as pesquisas. Use o serviço com moderação, observe os termos das plataformas e a LGPD.
+
+## Referência técnica
+
+- Código do servidor: `engine/serve.py`.
+- API de relatórios: `engine/dashboard_api.py`.
+- API do coletor: `/api/docs`, disponível quando o motor é iniciado.
+- Testes: `engine/test_engine.py` e `engine/test_dashboard.py`.
+
+Os nomes de arquivos, endpoints, variáveis de ambiente e flags permanecem originais para manter compatibilidade.
