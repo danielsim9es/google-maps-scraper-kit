@@ -34,10 +34,10 @@
   <aside class="sidebar">
     <a class="brand" href="/dashboard" aria-label="Prospect Intelligence: início">
       <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
-      <span><strong>PROSPECT<span class="brand-accent">.</span></strong><small>INTELLIGENCE SUITE</small></span>
+      <span><strong>PROSPECT<span class="brand-accent">.</span></strong><small>SUÍTE DE PROSPECÇÃO</small></span>
     </a>
     <div class="sidebar-block">
-      <p class="sidebar-label">WORKSPACE</p>
+      <p class="sidebar-label">ÁREA DE TRABALHO</p>
       <nav aria-label="Menu principal">
         <a href="/dashboard" class="nav-link active" aria-current="page"><svg class="ico"><use href="#i-grid"/></svg> Visão geral <span class="nav-caret">›</span></a>
         <a href="#map-panel" class="nav-link"><svg class="ico"><use href="#i-map"/></svg> Mapa de oportunidades</a>
@@ -54,17 +54,17 @@
     </div>
     <div class="sidebar-bottom">
       <div class="system-card"><span class="status-indicator"></span><div><strong>Engine local</strong><small id="engine-status">Conectando...</small></div></div>
-      <div class="sidebar-foot"><span>GMSKIT / FORK EDITION</span><span>01</span></div>
+      <div class="sidebar-foot"><span>GMSKIT / EDIÇÃO DO FORK</span><span>01</span></div>
     </div>
   </aside>
   <div class="workspace">
     <header class="topbar">
-      <div class="breadcrumbs"><span>Workspace</span><span class="crumb-divider">/</span><strong>Visão geral</strong></div>
+      <div class="breadcrumbs"><span>Área de trabalho</span><span class="crumb-divider">/</span><strong>Visão geral</strong></div>
       <div class="top-actions"><span class="local-pill"><span class="status-indicator"></span> AMBIENTE LOCAL</span><button class="icon-button" id="refresh-btn" title="Atualizar dados" aria-label="Atualizar dados"><svg class="ico"><use href="#i-refresh"/></svg></button><button id="top-create" class="button button-primary"><svg class="ico"><use href="#i-plus"/></svg> Nova pesquisa</button></div>
     </header>
     <main class="main-content">
       <section class="page-head">
-        <div class="heading-copy"><p class="eyebrow"><span class="accent-dash"></span> MARKET INTELLIGENCE / 001</p><h1>Visão geral <span>das oportunidades<span class="dot">.</span></span></h1><p class="subtitle">Transforme dados públicos coletados em oportunidades comerciais organizadas.</p></div>
+        <div class="heading-copy"><p class="eyebrow"><span class="accent-dash"></span> INTELIGÊNCIA DE MERCADO / 001</p><h1>Visão geral <span>das oportunidades<span class="dot">.</span></span></h1><p class="subtitle">Transforme dados públicos coletados em oportunidades comerciais organizadas.</p></div>
         <div class="head-controls"><button class="button button-ghost" id="export-json"><svg class="ico"><use href="#i-download"/></svg> JSON</button><button class="button button-outline" id="export-csv"><svg class="ico"><use href="#i-download"/></svg> Exportar CSV</button></div>
       </section>
       <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
@@ -86,7 +86,7 @@
           <label class="filter-field rating-filter"><span>Avaliação</span><select id="min-rating" aria-label="Avaliação mínima"><option value="0">Qualquer nota</option><option value="3">3,0+</option><option value="4">4,0+</option><option value="4.5">4,5+</option></select></label>
           <div class="quick-filters" role="group" aria-label="Filtros de disponibilidade"><label><input type="checkbox" id="only-email"> Com e-mail</label><label><input type="checkbox" id="only-phone"> Com telefone</label><label><input type="checkbox" id="only-web"> Com site</label></div>
         </form>
-        <div class="table-scroll"><table class="leads-table"><thead><tr><th>EMPRESA</th><th>SEGMENTO / ENDEREÇO</th><th>CONTATO</th><th>AVALIAÇÃO</th><th>WEBSITE</th></tr></thead><tbody id="leads-body"><tr><td colspan="5" class="table-empty">Carregando informações...</td></tr></tbody></table></div>
+        <div class="table-scroll"><table class="leads-table"><thead><tr><th>EMPRESA</th><th>SEGMENTO / ENDEREÇO</th><th>CONTATO</th><th>AVALIAÇÃO</th><th>SITE</th></tr></thead><tbody id="leads-body"><tr><td colspan="5" class="table-empty">Carregando informações...</td></tr></tbody></table></div>
         <footer class="table-footer"><div class="table-meta" id="table-meta">—</div><div class="pagination"><label class="sort-label">Ordenar: <select id="sort" aria-label="Ordenação"><option value="newest">Mais recentes</option><option value="rating">Melhor avaliação</option><option value="reviews">Mais avaliações</option><option value="name">Nome A–Z</option></select></label><button id="prev" class="page-arrow" aria-label="Página anterior" disabled>‹</button><span id="page-label">1 / 1</span><button id="next" class="page-arrow" aria-label="Próxima página" disabled>›</button></div></footer>
       </section>
       <section class="panel jobs-panel" id="jobs-panel" aria-labelledby="jobs-heading"><header class="panel-header"><div><p class="panel-caption">OPERAÇÃO</p><h2 id="jobs-heading">Atividade de coleta</h2></div><button class="button button-minimal" id="jobs-new">+ Iniciar coleta</button></header><div id="jobs-list" class="job-list"><p class="empty-mini">Aguardando coletas.</p></div></section>

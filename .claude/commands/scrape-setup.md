@@ -1,18 +1,14 @@
 ---
-description: Start the local Google Maps scraper engine and run a health check.
+description: Iniciar o motor local do Google Maps e verificar se está pronto para uso.
 ---
-Set up the kit's engine on this computer:
 
-1. Pick how the engine runs. By default, without Docker: from the kit root, run `python3 scripts/engine.py status` (Windows: `py scripts/engine.py status`). It needs Python 3.9 or newer. If it says the engine is running, go to step 3. It names the browser the engine will use; if it finds none, `start` would download Chrome for Testing once (about 100 MB, pinned by SHA-256), so ask the user first, or suggest installing Google Chrome or using Docker. If the user runs Docker instead, confirm it is up with `docker ps` (if it errors, point them to **Docker Desktop**, link in `SETUP.md` §0, and stop here), then run `docker compose up -d`; the first run builds the image, about a minute.
-2. Without Docker, start the engine: `python3 scripts/engine.py start` (Windows: `py scripts/engine.py start`).
-3. Verify it is live: `python3 scripts/engine.py status` (Windows: `py scripts/engine.py status`) should print `✓ Running on http://localhost:<port>`. It prints that only when the kit's own engine answers, and the URL is the base for every later call. If the port is not 8080, tell the user; the scripts read it from `.env` themselves.
-4. Report success. Tell the user they can now run `/scrape <business> in <city>`, or ask in plain language (e.g. "scrape gyms in Miami").
-5. **Show this warning once setup succeeds:**
-   > **Before you scrape:** the engine sends real requests to Google Maps. Light use is fine. Big jobs
-   > back to back, high `depth`, many keywords or scheduled runs without proxies can get your IP
-   > temporarily rate-limited by Google, usually for minutes to hours. Your Google account is not
-   > affected. Run one job at a time, start at `depth 5`, and add proxies for large or repeated runs.
-   > Scraping Google Maps is against Google's Terms of Service, and contact details are personal data,
-   > so follow GDPR, CCPA and CAN-SPAM.
+Prepare o motor deste kit no computador:
 
-If a step fails, see `SETUP.md` §6 (Troubleshooting).
+1. Na raiz do projeto, execute `python3 scripts/engine.py status` (Windows: `py scripts/engine.py status`). É necessário Python 3.9+.
+2. Se estiver parado, verifique o navegador indicado pelo status. Se não houver navegador compatível, informe que pode ser necessário instalar Chrome ou usar Docker; a inicialização nativa pode baixar o Chrome for Testing na primeira execução. Utilize `docker compose up -d` caso o usuário tenha escolhido Docker.
+3. Sem Docker, inicie com `python3 scripts/engine.py start`.
+4. Valide novamente o status. A mensagem de sucesso informa a URL, normalmente `http://localhost:8080`.
+5. Informe em português as interfaces: coletor em `/`, dashboard em `/dashboard` e documentação em `/api/docs`.
+6. Explique uma vez: o motor envia consultas reais ao Google Maps, o acesso automatizado pode contrariar os termos da plataforma, grandes volumes podem provocar limitação temporária do IP e contatos podem ser dados pessoais sujeitos à LGPD.
+
+Em caso de falha, use [SETUP.md](../../SETUP.md) para diagnóstico. Não divulgue `SCRAPER_API_KEY` ou credenciais.

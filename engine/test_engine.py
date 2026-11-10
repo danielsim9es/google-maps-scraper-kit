@@ -1242,6 +1242,7 @@ class ApiP3(Server):
         code, body, r = self.call("GET", "/api/docs")
         page, csp = body.decode(), r.getheader("Content-Security-Policy")
         self.assertEqual((code, r.getheader("Content-Type")), (200, "text/html; charset=utf-8"))
+        self.assertIn('lang="pt-BR"', page)
         self.assertNotIn("<script", page)
         nonce = re.search(r"nonce-([^']+)'", csp).group(1)
         self.assertIn(f'<style nonce="{nonce}">', page)
@@ -1256,6 +1257,8 @@ class ApiP3(Server):
         self.assertIn('<input id="where" role="combobox"', ui)
         self.assertIn("const TYPES = " + json.dumps(serve.TYPES) + ";", ui)  # the kit's own types work offline
         self.assertIn(serve.CATEGORIES, ui)  # Google's category names: loaded by the browser from GitHub, pinned
+        self.assertIn('lang="pt-BR"', ui)
+        self.assertIn('const TIPOS_PT = ', ui)  # segmento em português sem quebrar categorias originais
         self.assertRegex(serve.CATEGORIES, r"/[0-9a-f]{40}/")
         front = ui.split("<details>")[0]  # what a beginner sees before opening a section
         self.assertIn('<input type="checkbox" id="email" checked>', front)
@@ -1270,7 +1273,7 @@ class ApiP3(Server):
         # preset only: Enter in a box never submits; text not in a list is refused; each type is searched in
         # each city, one job per city centred on it; downloads are named after the search; local times; a favicon
         for rule in ("} else if (ev.key === 'Enter') {  // never submits the form", "if (active >= 0) pick(active);",
-                     "is not in the list", "is not picked yet", "whats.map(w => w + ' in ' + c.label)",
+                     "não aparece na lista", "ainda não foi selecionado", "whats.map(w => w + ' em ' + c.label)",
                      "lat: c.lat, lon: c.lon", "for (const c of wheres)", "'/api/v1/cities?q=' + encodeURIComponent(q)",
                      "stale = true", "!stale) say("):  # Enter picks nothing while a lookup for newer text is pending
             self.assertIn(rule, ui)
@@ -1281,8 +1284,8 @@ class ApiP3(Server):
         self.assertIn('<link rel="icon" href="data:image/svg+xml,', ui)
         # as gosom: a star button, and a sponsor box that can be closed; paid sponsors in it only when
         # sponsors.json lists one Mahan marked "ui": true, https links only, four at most
-        self.assertIn('Star on GitHub</a>', ui)
-        self.assertIn('Sponsor on GitHub</a>', ui)
+        self.assertIn('Dar estrela no GitHub</a>', ui)
+        self.assertIn('Apoiar no GitHub</a>', ui)
         self.assertIn('id="sp-close"', ui)
         self.assertIn('<div class="sp-grid" id="sp-grid" hidden>', ui)
         for rule in ("s.ui === true", "s.url.startsWith('https://')", ".slice(0, 4)", "noopener noreferrer sponsored"):

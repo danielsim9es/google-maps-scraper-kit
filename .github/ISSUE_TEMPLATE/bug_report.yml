@@ -1,27 +1,27 @@
-name: Bug report
-description: Report something in the kit that fails or behaves wrongly.
+name: Relatar problema
+description: Informe uma falha no funcionamento do kit.
 labels: [bug]
 body:
   - type: textarea
     id: what
     attributes:
-      label: What happened
-      description: What you expected, and what happened instead.
+      label: O que aconteceu?
+      description: Descreva o comportamento esperado e o observado. Não inclua dados pessoais ou senhas.
     validations:
       required: true
   - type: textarea
     id: command
     attributes:
-      label: Command or prompt
-      description: The exact command you ran, or what you asked the agent, and the full error output.
+      label: Comando ou solicitação ao agente
+      description: Informe o comando executado e a mensagem de erro, ocultando informações sensíveis.
       render: shell
     validations:
       required: true
   - type: input
     id: env
     attributes:
-      label: Environment
-      description: OS, chip (Intel or Apple Silicon), Python version, how the engine runs (scripts/engine.py or Docker), and the browser (python3 scripts/engine.py status prints it).
-      placeholder: macOS 15, Apple Silicon, Python 3.12, engine.py with Google Chrome
+      label: Ambiente
+      description: Sistema operacional, arquitetura, versão do Python, forma de inicialização e navegador.
+      placeholder: Windows 11, Python 3.12, engine.py com Chrome
     validations:
       required: true

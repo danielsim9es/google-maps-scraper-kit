@@ -1,78 +1,28 @@
-# Scrape roofing contractors from Google Maps: a lead list recipe
+# Exemplo de prospecção: empresas de telhados e coberturas
 
-This recipe shows how to scrape roofing contractors from Google Maps for one city with the Google Maps Scraper Kit, using one batch job for several search terms.
-You get a CSV of roofers with phone, email, website, address and rating, free and local, with no API key.
+Roteiro para localizar empresas de manutenção de telhados, calhas e coberturas em uma localidade. Os nomes de empresas só aparecerão após a coleta real.
 
-## Step 1: Run one search
-
-Start the engine, then test with one search at the default depth:
+## 1. Pesquisar o nicho
 
 ```bash
 python3 scripts/engine.py start
-python3 scripts/scrape.py "roofing contractors in Phoenix AZ" --city "Phoenix, AZ" --depth 5
+python3 scripts/scrape.py "empresas de telhados em São Paulo" --city "São Paulo, SP" --lang pt --country br --depth 3
 ```
 
-With Docker, `docker compose up -d` starts the same engine instead of the first line.
-
-Check the preview and the email found-rate line before you scale up.
-
-## Step 2: Batch the roofing variants
-
-Roofers list themselves under different names on Google Maps. Put each variant on its own line in a keywords file. Blank lines and lines starting with `#` are ignored.
-
-`roofing.txt`:
-
-```text
-# One keyword per line. All lines run as one job and one CSV.
-roofing contractor in Phoenix AZ
-roof repair in Phoenix AZ
-roofers in Phoenix AZ
-```
-
-Run them as one job:
+## 2. Ampliar palavras-chave
 
 ```bash
-python3 scripts/scrape.py --keywords-file roofing.txt --city "Phoenix, AZ"
+python3 scripts/scrape.py "telhadistas em São Paulo" --keyword "empresas de calhas em São Paulo" --keyword "manutenção de coberturas em São Paulo" --city "São Paulo, SP" --lang pt --out coberturas.csv
 ```
 
-## Step 3: Cover the whole city
-
-Each search stops at about 120 listings. Add `--grid 3` to split the city into 9 map tiles, run one at a time, with duplicates removed on `place_id`:
+## 3. Melhorar cobertura geográfica
 
 ```bash
-python3 scripts/scrape.py --keywords-file roofing.txt --city "Phoenix, AZ" --grid 3
+python3 scripts/scrape.py "empresas de telhados em São Paulo" --city "São Paulo, SP" --lang pt --grid 3 --out telhados-grade.csv
 ```
 
-Each of these commands also returns Instagram, Facebook, LinkedIn, TikTok, YouTube and X links found on each website. Add `--no-socials` to skip them.
+## 4. Qualificar contatos
 
-## Example output
+Utilize `--has-phone`, `--no-website`, `--min-rating` ou os filtros do dashboard para separar estabelecimentos de acordo com os dados disponíveis. E-mails podem ser buscados nos sites das próprias empresas.
 
-Illustrative rows only:
-
-| title | phone | emails | website | category | review_rating |
-|---|---|---|---|---|---|
-| Example Roofing Co | +1 602-555-0101 | estimates@example.com | example.com | Roofing contractor | 4.9 |
-| Sample Roof Repair | +1 602-555-0102 | info@example.org | example.org | Roofing contractor | 4.5 |
-| Demo Roofers | +1 602-555-0103 |  | example.net | Roofer | 4.3 |
-
-## Columns that matter for roofing outreach
-
-- `phone`: the main contact channel for most trade businesses.
-- `emails`: filled when the roofer publishes one. The email crawl reads the homepage, then contact and about pages.
-- `website`: an empty cell here also means no email or socials could be found.
-- `category`: shows how each business describes itself.
-- `review_rating`: a quick read on reputation. `review_count` works [headless](../../SETUP.md#review-counts-hours-and-reviews) and supports `--min-reviews` filtering.
-
-## What to expect
-
-- Overlapping terms find the same business more than once. The engine lists each place once per job, and the script dedupes on `place_id` as well, so the CSV has no repeats.
-- Emails appear only when a business publishes one on its website.
-- A grid with three keywords is a large job. The script prints a rate-limit warning and proceeds.
-- Add proxies for large or repeated runs. Heavy use without them can get your IP temporarily rate-limited.
-- Phones and emails are personal data, so read [Responsible use](../../README.md#responsible-use) before outreach.
-
-## Related
-
-- [Dentist leads recipe](dentist-leads.md)
-- [Restaurant leads recipe](restaurant-leads.md)
-- [Kit README](../../README.md)
+Evite tratar resultados incompletos como listas exaustivas e respeite os termos da fonte e a LGPD.

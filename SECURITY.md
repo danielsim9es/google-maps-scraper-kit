@@ -1,41 +1,29 @@
-# Security policy
+# Política de segurança
 
-This page tells you what to report, where to report it, and what belongs elsewhere.
+O Google Maps Scraper Kit é um serviço **local**. Não é uma aplicação autenticada para publicação direta na internet.
 
-## What to report
+## Problemas de segurança a reportar
 
-Report any way the kit could expose the engine, leak data or run code it should not. Examples: a
-change that binds the API beyond `127.0.0.1`, a script that leaks `SCRAPER_API_KEY`, or a
-command in `.claude/settings.json` that grants more than local access.
+- Acesso indevido ao motor além de `127.0.0.1` e `::1`.
+- Exposição de `SCRAPER_API_KEY`, credenciais de proxy ou dados de contatos.
+- Contorno das verificações de `Host` e `Origin` existentes.
+- Execução de conteúdo ou comandos provenientes de dados não confiáveis.
+- Redirecionamento de consultas de sites para IPs internos ou endereços privados (SSRF).
+- Download e execução de navegador sem a verificação de integridade prevista.
+- Vazamento de arquivos `.env`, SQLite, CSV ou resultados de coleta.
 
-The engine (`engine/serve.py`) listens on `127.0.0.1` only, and in Docker the port is published on
-the host's `127.0.0.1` only. That localhost binding is the security boundary: an API key is optional
-(`SCRAPER_API_KEY` in `.env` makes the engine require an `X-API-Key` header). Do not expose port
-8080 to a network.
+O servidor confere os cabeçalhos `Host` e `Origin` e pode exigir `X-API-Key` quando `SCRAPER_API_KEY` é configurada. O contêiner expõe a porta somente em `127.0.0.1`. **Não altere essas proteções para hospedar a aplicação diretamente.**
 
-The engine also answers only `localhost`, `127.0.0.1` and `[::1]` Host headers (421 otherwise) and
-refuses requests whose `Origin` is not its own page (403), so a web page in your browser, a local dev
-server on another port included, cannot reach it through DNS rebinding or a cross-site post. The
-engine and `scripts/scrape.py` fetch business websites only when they resolve, redirect and connect
-to a public address (behind an `HTTP(S)_PROXY`, `scrape.py` checks the address it resolves; the
-proxy makes the connection). Proxy passwords show as
-`***` in the API and the web UI and never reach the log. `scripts/engine.py start`
-runs a downloaded Chrome only when its SHA-256 matches the one pinned in `engine/browser.py`. A way
-around any of these checks is in scope.
+## Divulgação responsável
 
-The engine sends no telemetry. It contacts Google Maps; for email or socials jobs, the businesses'
-own websites; and for `verify_emails` jobs, Google's public DNS (`dns.google`). The web UI page in
-your browser also loads two files from `raw.githubusercontent.com`: the sponsor list
-(`sponsors.json`) and the business category list. A request to anywhere else is in scope.
+Não publique detalhes de vulnerabilidades exploráveis em issues abertas. Para falhas herdadas do projeto original, utilize o [canal de avisos privados de segurança do projeto de origem](https://github.com/Mahanaicoach/google-maps-scraper-kit/security/advisories/new). Para alterações específicas deste fork, procure um canal privado de comunicação com o mantenedor antes de divulgar detalhes. Nunca envie senhas, tokens ou amostras com dados pessoais.
 
-## Where to report
+## Fora de escopo
 
-Use GitHub's private
-[security advisory form](https://github.com/Mahanaicoach/google-maps-scraper-kit/security/advisories/new).
-Do not open a public issue for security problems.
+- Limitações normais de requisições do Google Maps.
+- Vulnerabilidades de navegadores e imagens-base mantidos por terceiros (reportar aos respectivos projetos).
+- Problemas que ocorram exclusivamente depois que alguém remover deliberadamente as proteções locais.
 
-## Out of scope
+## Boas práticas
 
-- Problems that only occur after you expose the API to a network yourself.
-- Bugs in Chrome, Chromium or the Debian base image. Report those to their projects.
-- Google rate-limiting your IP. That is expected behavior, covered in [SETUP.md](SETUP.md).
+Armazene a configuração sensível fora do Git, restrinja permissões de disco, faça backups seguros, revise dependências e respeite a LGPD. Consulte [SETUP.md](SETUP.md).
