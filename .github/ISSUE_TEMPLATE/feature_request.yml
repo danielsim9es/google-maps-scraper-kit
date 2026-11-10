@@ -1,11 +1,11 @@
-name: Feature request
-description: Suggest a change that would make the kit more useful.
+name: Solicitação de melhoria
+description: Sugira uma mudança que tornaria o projeto mais útil.
 labels: [enhancement]
 body:
   - type: textarea
     id: idea
     attributes:
-      label: What should the kit do?
-      description: Describe the problem it would solve for you.
+      label: Qual melhoria você gostaria de ver?
+      description: Explique o problema, a ideia e os benefícios esperados.
     validations:
       required: true

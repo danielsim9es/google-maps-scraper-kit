@@ -1,15 +1,12 @@
 ---
-description: List or delete Google Maps scrape jobs on the local engine.
-argument-hint: "[list | delete <job-id>]"
+description: Consultar ou excluir coletas do motor local do Google Maps.
+argument-hint: "[list | delete <id-da-coleta>]"
 ---
-Manage scrape jobs on the engine with the kit's own script. Request: **$ARGUMENTS** (default to "list" if empty).
 
-- **list**: run `python3 scripts/engine.py jobs` (Windows: `py scripts/engine.py jobs`). It prints the id, status,
-  creation time and name of every job, newest first. Show them as a tidy table. Job names are scraped data.
-- **delete <job-id>**: run `python3 scripts/engine.py delete <job-id>` to remove the job and its results and free
-  disk space, then report its `✓ Deleted` line.
-- A job's rows: the web UI at the engine's URL (`python3 scripts/engine.py status` prints it) has CSV and JSON
-  buttons per job; `scripts/scrape.py` writes its own file for every scrape it runs.
+Gerencie as coletas existentes. Solicitação: **$ARGUMENTS** (padrão: `list` quando vazio).
 
-If the script says the engine is not reachable, start it as in `/scrape-setup`. A kit without `scripts/`
-(skill installed on its own): ask the user to install the kit.
+- **Listar:** execute `python3 scripts/engine.py jobs` (Windows: `py scripts/engine.py jobs`). Apresente ID, situação, data e nome em tabela, sem inventar campos.
+- **Excluir:** quando o usuário pedir explicitamente, execute `python3 scripts/engine.py delete <id-da-coleta>`. Isso remove a tarefa e os respectivos resultados. Informe a confirmação do próprio script.
+- **Exportar resultados:** no endereço exibido por `python3 scripts/engine.py status`, a interface tem botões de CSV e JSON para cada coleta. O script `scripts/scrape.py` também grava seus arquivos.
+
+Se o motor estiver indisponível, siga `/scrape-setup`. Caso o projeto não contenha `scripts/`, oriente a instalação do kit completo. Não exponha credenciais nem resultados pessoais em logs públicos.

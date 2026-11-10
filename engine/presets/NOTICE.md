@@ -1,9 +1,5 @@
-# Notices for the preset files
+# Avisos e atribuições dos arquivos predefinidos
 
-`cities.tsv.gz` is derived from the GeoNames `cities1000` dump (https://www.geonames.org/),
-licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). It is cut to five fields
-(name, region, country, coordinates), one row per city label. This notice ships with the file,
-including inside the Docker image.
+`cities.tsv.gz` foi derivado do conjunto `cities1000` do [GeoNames](https://www.geonames.org/), distribuído sob licença [Creative Commons Atribuição 4.0](https://creativecommons.org/licenses/by/4.0/). Os dados foram reduzidos a campos como nome, região, país e coordenadas. Este aviso acompanha o arquivo, inclusive nas imagens Docker.
 
-`business-types.json` is this kit's own list (MIT, see the kit's LICENSE). The kit's CREDITS.md
-names every project the kit builds on.
+`business-types.json` contém categorias selecionadas pelo projeto e segue a licença MIT do kit. Consulte [LICENSE](../../LICENSE) e [CREDITS.md](../../CREDITS.md) para créditos e referências de terceiros.

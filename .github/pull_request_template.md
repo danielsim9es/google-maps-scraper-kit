@@ -1,20 +1,20 @@
-## What this changes
+## O que esta PR altera?
 
-<!-- One or two sentences. Keep the PR to one change. -->
+<!-- Resuma a alteração em uma ou duas frases. -->
 
-## Why
+## Por que ela é necessária?
 
-<!-- The problem it solves. Link the issue if there is one: Fixes #123 -->
+<!-- Descreva o problema e vincule uma issue, se houver. -->
 
-## How I tested it
+## Como foi testado?
 
-<!-- The exact command you ran, e.g. a `depth 1` scrape, and what you got back. -->
+<!-- Informe os testes e comandos executados. Não inclua contatos nem dados coletados. -->
 
-## Checklist
+## Lista de verificação
 
-- [ ] Tested with a `depth 1` scrape
-- [ ] `scripts/scrape.py` still uses the Python standard library only (no pip dependencies)
-- [ ] `scripts/scrape.sh` still runs on macOS's default bash 3.2
-- [ ] No scrape output (CSV or result files) committed
-- [ ] `python3 scripts/test_scrape.py` passes, and `python3 engine/test_engine.py` and `python3 engine/test_cdp.py` for engine changes
-- [ ] Docs updated (README, SETUP or the skill) if behavior changed
+- [ ] Executei os testes offline aplicáveis
+- [ ] O coletor e o dashboard continuam funcionando localmente
+- [ ] Preservei contratos de API, flags CLI e compatibilidade com Python 3.9+
+- [ ] Não incluí arquivos .env, CSV, SQLite, tokens ou dados pessoais
+- [ ] Atualizei documentação e textos em pt-BR, quando necessário
+- [ ] Mantive licença MIT e créditos do projeto original
