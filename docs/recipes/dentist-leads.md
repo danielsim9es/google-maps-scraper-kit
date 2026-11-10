@@ -1,74 +1,36 @@
-# Scrape dentists from Google Maps: a lead list recipe
+# Exemplo de prospecção: clínicas odontológicas
 
-This recipe shows how to scrape dentists from Google Maps for one city with the Google Maps Scraper Kit, from a quick test to the whole city.
-You get a CSV of dental practices with phone, email, website, address and rating, free and local, with no API key.
+Este roteiro demonstra como organizar uma pesquisa de **clínicas e consultórios odontológicos** em uma cidade. Não há dados simulados nem garantia de contatos.
 
-## Step 1: Run one search
-
-Start the engine, then test with one search at the default depth:
+## 1. Fazer uma coleta de teste
 
 ```bash
 python3 scripts/engine.py start
-python3 scripts/scrape.py "dentists in Denver CO" --city "Denver, CO" --depth 5
+python3 scripts/scrape.py "dentistas em Campinas" --city "Campinas, SP" --lang pt --country br --depth 3 --out dentistas.csv
 ```
 
-With Docker, `docker compose up -d` starts the same engine instead of the first line.
+Avalie se a área está correta antes de ampliar a pesquisa.
 
-Check the preview and the found-rate line for emails. If the rows look right, widen the run.
-
-## Step 2: Cover the whole city
-
-One search stops at about 120 listings. Split the city into a 3 x 3 grid of map tiles:
+## 2. Ampliar a cobertura
 
 ```bash
-python3 scripts/scrape.py "dentists in Denver CO" --city "Denver, CO" --grid 3
+python3 scripts/scrape.py "clínicas odontológicas em Campinas" --city "Campinas, SP" --lang pt --grid 3 --out clinicas.csv
 ```
 
-That is 9 jobs, run one at a time. Results are deduped on `place_id`, and rows outside the city box are dropped.
+A grade divide a área em sub-regiões e tenta reduzir o limite por consulta. Ela não garante encontrar todas as clínicas.
 
-## Step 3: Add social profiles
+## 3. Identificar contatos e oportunidades
 
-Social profiles are on by default. The CSV has `instagram`, `facebook`, `linkedin`, `tiktok`, `youtube` and `x` columns, filled from links on each practice website. Add `--no-socials` if you do not want them:
+Telefone, site, endereço, e-mail e avaliações são úteis para segmentação. Para empresas sem site:
 
 ```bash
-python3 scripts/scrape.py "dentists in Denver CO" --city "Denver, CO" --grid 3 --no-socials
+python3 scripts/scrape.py "dentistas em Campinas" --city "Campinas, SP" --lang pt --no-website
 ```
 
-Want specialists too? The kit ships a ready batch file with dentists, orthodontists, dental hygienists and pediatric dentists in Denver:
+O e-mail é consultado opcionalmente no site; não é fornecido para todos os estabelecimentos.
 
-```bash
-python3 scripts/scrape.py --keywords-file examples/queries.example.txt --city "Denver, CO"
-```
+## 4. Avaliar no painel
 
-## Example output
+Abra `http://localhost:8080/dashboard` e use os filtros de avaliação, telefone, site e segmento. Exporte o CSV filtrado para revisão manual.
 
-Illustrative rows only:
-
-| title | phone | emails | website | review_rating | instagram |
-|---|---|---|---|---|---|
-| Example Dental Studio | +1 303-555-0101 | hello@example.com | example.com | 4.9 | instagram.com/exampledental |
-| Sample Family Dentistry | +1 303-555-0102 | front@example.org | example.org | 4.6 | |
-| Demo Orthodontics | +1 303-555-0103 |  | example.net | 4.8 | instagram.com/demoortho |
-
-## Columns that matter for dental outreach
-
-- `title` and `phone`: who to call, and the number to call.
-- `emails`: the published practice inbox. The email crawl reads the homepage, then contact and about pages.
-- `website`: the site you will review before you reach out.
-- `category`: separates general dentists from orthodontists and other specialists.
-- `review_rating`: a quick read on the practice's reputation. `review_count` works [headless](../../SETUP.md#review-counts-hours-and-reviews) and supports `--min-reviews` filtering.
-- `instagram`, `facebook`, `linkedin` (and `tiktok`, `youtube`, `x`): on by default, filled when the site links them. `--no-socials` drops them.
-
-## What to expect
-
-- Emails appear only when a practice publishes one on its website. Expect some empty cells.
-- A grid is slower than one search and more likely to trip rate limits. Run one job at a time.
-- Add proxies for large or repeated runs. Heavy use without them can get your IP temporarily rate-limited.
-- Socials appear only when the practice links them on its own site.
-- Phones and emails are personal data, so read [Responsible use](../../README.md#responsible-use) before outreach.
-
-## Related
-
-- [Roofing contractor leads recipe](roofing-contractor-leads.md)
-- [Google Maps email scraper](../google-maps-email-scraper.md)
-- [Kit README](../../README.md)
+**Uso responsável:** observe a LGPD, as regras da plataforma e a legislação de publicidade aplicável à atividade odontológica.

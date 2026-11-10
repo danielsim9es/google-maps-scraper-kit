@@ -1,81 +1,39 @@
-# Credits and attribution
+# Créditos, autorias e atribuições
 
-This page lists who built what in the Google Maps Scraper Kit, and the licenses of the parts it uses.
+Esta página preserva a proveniência dos componentes reutilizados pelo Google Maps Scraper Kit. A tradução de documentação e a interface em português não transferem a autoria do projeto original.
 
-The kit, its Google Maps engine (`engine/`), the scripts, the skill and the slash commands are designed
-and built by Mahan ([@Mahanaicoach](https://github.com/Mahanaicoach)), MIT licensed (see [LICENSE](LICENSE)).
+## Projeto original
 
-## History: gosom/google-maps-scraper
+O kit original, seu motor `engine/`, os scripts, a skill e os comandos foram desenvolvidos por **Mahan ([@Mahanaicoach](https://github.com/Mahanaicoach))** e distribuídos sob a **licença MIT**. Veja [LICENSE](LICENSE).
 
-Kit versions 1.x ran [gosom/google-maps-scraper](https://github.com/gosom/google-maps-scraper) by
-Georgios Komninos ([@gosom](https://github.com/gosom)), an MIT-licensed Go scraper, as its official
-Docker image, unmodified. That engine shaped this kit: the job API (`/api/v1/jobs`, the job body, the
-`Status` values) and the 36 CSV column names, with the JSON layout inside them, are its design, kept
-so that scripts and files made for kit 1.x keep working (what changed inside a few columns: SETUP.md,
-"Upgrading from kit 1.x"). Kit 2.0's own engine contains none of its code, so this repository no longer
-carries its license notice. To support its author, star the repository:
-https://github.com/gosom/google-maps-scraper
+Este repositório é o fork mantido em `danielsim9es/google-maps-scraper-kit`, com interface e documentação em pt-BR e o módulo adicional **Prospect Intelligence**.
 
-## Chrome for Testing
+## Histórico: gosom/google-maps-scraper
 
-On a machine with no Chrome, Chromium, Edge or Brave, `scripts/engine.py start` downloads Google's
-[Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/) headless shell, pinned by
-version and SHA-256 in `engine/browser.py`. It is Google's build of Chrome, made from the open-source
-Chromium project. This repository does not contain or redistribute it: it comes from Google's servers
-straight into `.engine/` on your machine, under Google's terms for Chrome (its `ABOUT` file) and the
-open-source licenses listed in its `LICENSE.headless_shell` file. The Docker image installs Debian's
-`chromium` package instead, under Chromium's BSD-style license and the notices Debian ships with it.
+As versões 1.x do kit utilizavam o projeto [gosom/google-maps-scraper](https://github.com/gosom/google-maps-scraper), criado por Georgios Komninos ([@gosom](https://github.com/gosom)), distribuído sob licença MIT. Seu formato de tarefas, API e colunas CSV inspirou a compatibilidade mantida pelo kit. O motor da série 2.x é próprio e não incorpora o código Go daquele motor.
 
-## City list: GeoNames
+## Chrome for Testing e Chromium
 
-The web UI's Where box offers only real places: about 168,000 cities and towns of more than 1,000
-people (name, region, country, coordinates), from the [GeoNames](https://www.geonames.org/)
-`cities1000` dump, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-`engine/presets/cities.tsv.gz` is that data, cut to those five fields, one row per city label.
+Quando não há navegador disponível, o kit pode baixar o [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/), distribuído pelo Google, verificando SHA-256 conforme `engine/browser.py`. O navegador é um componente externo e tem seus próprios termos e licenças; o repositório não distribui o binário diretamente.
 
-The What box offers a hand-picked list of popular business types for this kit
-(`engine/presets/business-types.json`), then Google's business category names (4,053, US English)
-from [lobstrio/google-business-categories](https://github.com/lobstrio/google-business-categories)
-by lobstr.io. Your browser loads that list from GitHub at runtime, pinned to one commit in
-`engine/serve.py`, and caches it for 30 days. This repository does not contain or redistribute it,
-because that repository has no license file. Until the browser has fetched it once, the box offers the kit's own list only.
+## Base de cidades: GeoNames
 
-## Website signals adapted from OpenLeadFinder
+As cidades de `engine/presets/cities.tsv.gz` derivam de [GeoNames](https://www.geonames.org/), distribuído sob **Creative Commons Attribution 4.0**. Consulte [licença CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) e `engine/presets/NOTICE.md` para informações adicionais de atribuição.
 
-The `--tech` detection patterns, the intent score and the obfuscated-email patterns in
-`scripts/scrape.py`, and its private-address guard, are adapted from OpenLeadFinder, Mahan's
-self-hosted lead finder. It is released under the MIT License, Copyright (c) 2026 OpenLeadFinder
-contributors, with the license text below.
+## Tecnologias de sites e OpenLeadFinder
 
-## MIT License text (OpenLeadFinder)
+Parte das ideias ou lógica de análise de tecnologias e sinais de marketing em sites foi adaptada de **OpenLeadFinder**, conforme os créditos do projeto original. Observe os termos e arquivos de licença da fonte e da distribuição original; a referência não significa endosso deste fork.
 
-```
-MIT License
+## Playwright
 
-Copyright (c) 2026 OpenLeadFinder contributors
+A renderização opcional de sites utiliza [Microsoft Playwright para Python](https://github.com/microsoft/playwright-python), sob [Apache License 2.0](https://github.com/microsoft/playwright-python/blob/main/LICENSE). A dependência é instalada separadamente via `requirements-browser.txt`.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Prospect Intelligence
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+A camada de visualização adicionada neste fork usa componentes web e a biblioteca Leaflet com mapas do OpenStreetMap. Consulte os avisos de licença e atribuição desses projetos, além das condições de uso dos serviços de tiles.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+## Licenças e marcas
 
-## Optional website rendering: Playwright
+Os avisos de licença original são mantidos em `LICENSE`. As marcas citadas pertencem aos seus respectivos titulares. O conteúdo presente neste fork não concede permissão adicional sobre fontes de dados de terceiros.
 
-The optional website enrichment fallback uses [Microsoft Playwright for Python](https://github.com/microsoft/playwright-python),
-licensed under [Apache License 2.0](https://github.com/microsoft/playwright-python/blob/main/LICENSE).
-It is installed separately through `requirements-browser.txt`; this repository does not vendor its code
-or browser binaries. The default HTTP crawl and Maps engine do not require Playwright.
+Documento de autoria original e histórico disponível no [repositório de origem](https://github.com/Mahanaicoach/google-maps-scraper-kit/blob/master/CREDITS.md).
