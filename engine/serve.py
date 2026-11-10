@@ -223,27 +223,61 @@ OPENAPI["paths"].update({
     "/api/v1/dashboard/export": {"get": {"summary": "Download filtered CSV or JSON; ?format=csv|json."}},
 })
 
+
+# Resumo de documentação em português; preserva IDs e contratos da API.
+OPENAPI["info"]["title"] = "API do Google Maps Scraper Kit"
+OPENAPI["info"]["description"] = ("API local. Crie coletas, acompanhe a situação e baixe resultados em CSV ou JSON. " "As tarefas interrompidas podem ser retomadas. Fonte: " + REPO)
+OPENAPI["paths"]["/api/v1/jobs"]["get"]["summary"] = "Lista as coletas, da mais recente para a mais antiga (null quando vazia)."
+OPENAPI["paths"]["/api/v1/jobs"]["post"]["summary"] = "Cria uma coleta: retorna 201 com id; erros de validação retornam 422."
+OPENAPI["paths"]["/api/v1/jobs/{id}"]["get"]["summary"] = "Detalhes da coleta: ID, nome, data, situação, parâmetros, erros e progresso."
+OPENAPI["paths"]["/api/v1/jobs/{id}"]["delete"]["summary"] = "Exclui a coleta e seus resultados e interrompe a execução, quando estiver em andamento."
+OPENAPI["paths"]["/api/v1/jobs/{id}/download"]["get"]["summary"] = "Baixa o CSV da coleta, inclusive resultados parciais; use ?format=json para receber JSON."
+OPENAPI["paths"]["/api/v1/cities"]["get"]["summary"] = "Consulta de cidades para a seleção de localidades: filtro por prefixo no parâmetro q."
+OPENAPI["paths"]["/api/openapi.json"]["get"]["summary"] = "Especificação OpenAPI JSON da aplicação."
+OPENAPI["paths"]["/api/v1/dashboard"]["get"]["summary"] = "Indicadores, empresas paginadas e pontos de mapa com base nas coletas locais."
+OPENAPI["paths"]["/api/v1/dashboard/summary"]["get"]["summary"] = "Resumo filtrado, segmentos, cobertura de dados e total de coletas."
+OPENAPI["paths"]["/api/v1/dashboard/leads"]["get"]["summary"] = "Empresas coletadas, deduplicadas, filtradas e paginadas."
+OPENAPI["paths"]["/api/v1/dashboard/geojson"]["get"]["summary"] = "Pontos de empresas em GeoJSON, até 700 por visualização."
+OPENAPI["paths"]["/api/v1/dashboard/export"]["get"]["summary"] = "Exporta registros filtrados como CSV ou JSON; ?format=csv|json."
+JOB_PROPS["name"]["description"] = "Nome da coleta"
+JOB_PROPS["keywords"]["description"] = "Lista de termos executados em sequência"
+JOB_PROPS["lang"]["description"] = "Idioma da pesquisa com duas letras, por exemplo pt"
+JOB_PROPS["country"]["description"] = "País com duas letras, por exemplo br"
+JOB_PROPS["lat"]["description"] = "Latitude do centro da pesquisa"
+JOB_PROPS["lon"]["description"] = "Longitude do centro da pesquisa"
+JOB_PROPS["max_time"]["description"] = "Tempo máximo da tarefa, em segundos"
+JOB_PROPS["depth"]["description"] = "Etapas de resultados por termo"
+JOB_PROPS["zoom"]["description"] = "Nível de zoom do mapa (1 a 21)"
+JOB_PROPS["email"]["description"] = "Pesquisar e-mails nos sites das empresas"
+JOB_PROPS["verify_emails"]["description"] = "Verificar DNS/MX dos domínios de e-mail e incluir email_host"
+JOB_PROPS["browser_sites"]["description"] = "Usar Playwright opcionalmente para sites com JavaScript"
+JOB_PROPS["socials"]["description"] = "Pesquisar links de redes sociais nos sites"
+JOB_PROPS["reviews_max"]["description"] = "Avaliações por empresa, de 0 a 5"
+JOB_PROPS["proxies"]["description"] = "Lista de servidores proxy usados na pesquisa"
+JOB_PROPS["radius"]["description"] = "Aceito, porém não utilizado"
+JOB_PROPS["fast_mode"]["description"] = "Aceito, porém não utilizado"
+
 def docs_page(nonce):
     """/api/docs: OPENAPI as a plain HTML page (no scripts, nothing loaded from elsewhere)."""
     e = html.escape
     out = [f"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
-           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Engine API</title>"
+           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Documentação da API</title>"
            f"<style nonce=\"{nonce}\">:root {{ color-scheme: light dark; }} body {{ margin: 0 auto; max-width: 960px; "
            "padding: 16px; font: 15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; }} code {{ font-size: .95em; }} "
            "table {{ width: 100%; border-collapse: collapse; }} th, td {{ text-align: left; vertical-align: top; "
            "padding: 4px 6px; border-bottom: 1px solid #8884; }} .m {{ font-weight: 600; }}</style></head><body>",
            f"<h1>{e(OPENAPI['info']['title'])} {e(VERSION)}</h1><p>{e(OPENAPI['info']['description'])}</p>",
-           "<p><a href=\"/\">Web UI</a> · <a href=\"/api/openapi.json\">OpenAPI JSON</a> · "
-           "With SCRAPER_API_KEY set, send it as an <code>X-API-Key</code> header.</p>"]
+           "<p><a href=\"/\">Coletor</a> · <a href=\"/api/openapi.json\">OpenAPI JSON</a> · "
+           "Quando SCRAPER_API_KEY estiver configurada, envie-a no cabeçalho <code>X-API-Key</code>.</p>"]
     for path, ops in OPENAPI["paths"].items():
         for method, op in ops.items():
             out.append(f"<h2><span class=\"m\">{e(method.upper())}</span> <code>{e(path)}</code></h2><p>{e(op['summary'])}</p>")
             schema = op.get("requestBody", {}).get("content", {}).get("application/json", {}).get("schema")
             if schema:
-                out.append("<table><tr><th>Field</th><th>Type</th><th>Required</th><th>Meaning</th></tr>")
+                out.append("<table><tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>")
                 for name, prop in schema["properties"].items():
                     out.append(f"<tr><td><code>{e(name)}</code></td><td>{e(prop['type'])}</td>"
-                               f"<td>{'yes' if name in schema['required'] else ''}</td>"
+                               f"<td>{'sim' if name in schema['required'] else ''}</td>"
                                f"<td>{e(prop.get('description', ''))}</td></tr>")
                 out.append("</table>")
     out.append("</body></html>")
@@ -251,8 +285,8 @@ def docs_page(nonce):
 
 
 PAGE = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Google Maps Scraper Kit</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Maps Scraper Kit — Coletor de empresas</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cpath fill=%27%230b7a5b%27 d=%27M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z%27/%3E%3C/svg%3E">
 <style nonce="{nonce}">
 :root {{ color-scheme: light dark; --paper: #f5f3ee; --sheet: #fffdf8; --ink: #17191c; --soft: #5b5f66; --rule: #dcd8ce;
@@ -381,89 +415,89 @@ progress {{ display: block; width: 100%; max-width: 200px; height: 6px; margin-t
 @media (prefers-reduced-motion: reduce) {{ * {{ transition: none !important; }} }}
 </style></head><body><main>
 <header class="top"><h1>Google Maps Scraper Kit</h1>
-<nav><span class="mono">v{version}</span><a href="/dashboard">Dashboard</a> · <a href="/api/docs">API docs</a></nav></header>
-<div class="update" id="update" role="status" hidden><b>Kit v<span id="up-v"></span> is out</b> (this copy is v{version}).
-  <a id="up-link" href="{repo}/releases/latest" target="_blank" rel="noopener">What changed</a> &middot;
-  update with <code>bash scripts/update.sh</code>, or <code>docker compose up -d --build</code> in Docker.</div>
-<div class="stars"><a class="gh" href="{repo}" target="_blank" rel="noopener"><span class="star"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.2l-5.9 3.3 1.3-6.6L2.5 9.3l6.6-.8z"/></svg></span>Star on GitHub</a>
-  <span>Useful? A star helps other people find this free kit.</span></div>
-<aside class="sponsors" id="sponsors" aria-label="Sponsors"><button type="button" class="sp-close" id="sp-close"
-  aria-label="Hide sponsors">&times;</button>
-  <div class="sp-head" id="sp-head" hidden>Supported by</div><div class="sp-grid" id="sp-grid" hidden></div>
-  <p class="sp-ask"><span>Support the upkeep of this free, open-source kit.</span>
-    <a class="gh" href="https://github.com/sponsors/Mahanaicoach" target="_blank" rel="noopener"><span class="heart"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C1 8.6 2.9 5 6.6 5c2.1 0 3.5 1.2 5.4 3.2C13.9 6.2 15.3 5 17.4 5 21.1 5 23 8.6 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg></span>Sponsor on GitHub</a></p>
+<nav><span class="mono">v{version}</span><a href="/dashboard">Painel de prospecção</a> · <a href="/api/docs">Documentação da API</a></nav></header>
+<div class="update" id="update" role="status" hidden><b>Kit v<span id="up-v"></span> está disponível</b> (versão atual: v{version}).
+  <a id="up-link" href="{repo}/releases/latest" target="_blank" rel="noopener">Ver novidades</a> &middot;
+  atualize com <code>bash scripts/update.sh</code>, ou <code>docker compose up -d --build</code> no Docker.</div>
+<div class="stars"><a class="gh" href="{repo}" target="_blank" rel="noopener"><span class="star"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.2l-5.9 3.3 1.3-6.6L2.5 9.3l6.6-.8z"/></svg></span>Dar estrela no GitHub</a>
+  <span>Gostou? Uma estrela ajuda mais pessoas a encontrar esta ferramenta gratuita.</span></div>
+<aside class="sponsors" id="sponsors" aria-label="Patrocinadores"><button type="button" class="sp-close" id="sp-close"
+  aria-label="Ocultar patrocinadores">&times;</button>
+  <div class="sp-head" id="sp-head" hidden>Apoiado por</div><div class="sp-grid" id="sp-grid" hidden></div>
+  <p class="sp-ask"><span>Ajude a manter este projeto gratuito e de código aberto.</span>
+    <a class="gh" href="https://github.com/sponsors/Mahanaicoach" target="_blank" rel="noopener"><span class="heart"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C1 8.6 2.9 5 6.6 5c2.1 0 3.5 1.2 5.4 3.2C13.9 6.2 15.3 5 17.4 5 21.1 5 23 8.6 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg></span>Apoiar no GitHub</a></p>
 </aside>
-<section aria-labelledby="h-new"><h2 id="h-new">New search</h2>
+<section aria-labelledby="h-new"><h2 id="h-new">Nova pesquisa</h2>
 <form id="f">
   <div class="ww">
-    <div class="pick"><label for="what">What</label><div class="box">
+    <div class="pick"><label for="what">Tipo de empresa</label><div class="box">
       <div class="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
         <input id="what" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="what-opts"
-          autocomplete="off" placeholder="e.g. Dentists"></div>
-      <ul class="opts" id="what-opts" role="listbox" aria-label="Business types" hidden></ul></div>
+          autocomplete="off" placeholder="Ex.: Barbearias"></div>
+      <ul class="opts" id="what-opts" role="listbox" aria-label="Tipos de empresas" hidden></ul></div>
       <div class="row tags" id="whats"></div></div>
-    <div class="pick"><label for="where">Where</label><div class="box">
+    <div class="pick"><label for="where">Cidade ou região</label><div class="box">
       <div class="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/>
         <circle cx="12" cy="9.5" r="2.5"/></svg>
         <input id="where" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="where-opts"
-          autocomplete="off" placeholder="e.g. Austin"></div>
-      <ul class="opts" id="where-opts" role="listbox" aria-label="Cities" hidden></ul></div>
+          autocomplete="off" placeholder="Ex.: São Paulo"></div>
+      <ul class="opts" id="where-opts" role="listbox" aria-label="Cidades" hidden></ul></div>
       <div class="row tags" id="wheres"></div></div>
   </div>
-  <p class="hint soft">Pick from the lists; add as many as you like. Each business type is searched in each city, one job per city.</p>
-  <fieldset class="collect"><legend>Collect</legend>
-    <label class="chip"><input type="checkbox" id="email" checked> Emails</label>
+  <p class="hint soft">Escolha as opções nas listas. Você pode combinar vários segmentos e cidades; será criada uma coleta por cidade.</p>
+  <fieldset class="collect"><legend>Coletar</legend>
+    <label class="chip"><input type="checkbox" id="email" checked> E-mails</label>
     <div class="collect-choice">
-      <label class="chip"><input type="checkbox" id="socials" checked> Social accounts</label>
+      <label class="chip"><input type="checkbox" id="socials" checked> Redes sociais</label>
       <button type="button" class="info-button" popovertarget="socials-help"
-        aria-label="About social accounts and scrape speed"
-        title="Finds social profile links on business websites. Website checks may slow the scrape."><span aria-hidden="true">!</span></button>
+        aria-label="Sobre a coleta de redes sociais e o tempo de execução"
+        title="Procura redes sociais no site das empresas. Essa etapa pode aumentar a duração da coleta."><span aria-hidden="true">!</span></button>
     </div>
     <div class="collect-choice">
-      <label class="chip"><input type="checkbox" id="browser-sites"> Render websites (Playwright)</label>
+      <label class="chip"><input type="checkbox" id="browser-sites"> Renderizar sites (Playwright)</label>
       <button type="button" class="info-button" popovertarget="browser-help"
-        aria-label="About website rendering and scrape speed"
-        title="Retries websites with a browser. This can slow the scrape; enable only when needed."><span aria-hidden="true">!</span></button>
+        aria-label="Sobre a renderização dos sites e a velocidade da pesquisa"
+        title="Tenta novamente com um navegador. Ative apenas quando necessário."><span aria-hidden="true">!</span></button>
     </div>
-    <div id="socials-help" class="info-note" popover role="note" aria-label="Social account collection">
-      <strong>Social accounts</strong>
-      <p>Finds Instagram, Facebook, LinkedIn, TikTok, YouTube and X profile links on each business website.</p>
-      <p>Website checks may slow the scrape compared with collecting Maps listings alone. Pages already fetched for emails are reused.</p>
-      <p>Turn this option off when you do not need social accounts.</p>
+    <div id="socials-help" class="info-note" popover role="note" aria-label="Coleta de redes sociais">
+      <strong>Redes sociais</strong>
+      <p>Procura links de Instagram, Facebook, LinkedIn, TikTok, YouTube e X nos sites das empresas.</p>
+      <p>Verificar sites pode demorar mais do que coletar apenas dados do Maps. Páginas já acessadas para buscar e-mails são reaproveitadas.</p>
+      <p>Desative esta opção quando não precisar dos links de redes sociais.</p>
     </div>
-    <div id="browser-help" class="info-note" popover role="note" aria-label="Website rendering speed">
-      <strong>Render websites</strong>
-      <p>Retries websites when the quick website check finds no email addresses or social profile links.</p>
-      <p>This can slow the scrape. Browser retries share a 30-second budget per job, plus cleanup time. Leave this off for the fastest run.</p>
+    <div id="browser-help" class="info-note" popover role="note" aria-label="Tempo de renderização dos sites">
+      <strong>Renderizar sites</strong>
+      <p>Tenta renderizar páginas quando a verificação rápida não encontra e-mails nem links de redes sociais.</p>
+      <p>Esta etapa pode aumentar o tempo de coleta. As tentativas de renderização compartilham um limite de 30 segundos por tarefa, além da finalização. Deixe desativado para maior velocidade.</p>
     </div>
   </fieldset>
-  <details><summary>Location and language</summary><div class="body">
-    <p class="wide soft">Each job centres the map on its city.</p>
+  <details><summary>Localização e idioma</summary><div class="body">
+    <p class="wide soft">Cada pesquisa centraliza o mapa na cidade selecionada.</p>
     <label for="zoom">Zoom<input id="zoom" type="number" min="1" max="21" value="15"></label>
-    <label for="lang">Language<input id="lang" value="en" maxlength="2" pattern="[A-Za-z]{{2}}"></label>
-    <label for="country"><span>Country <span class="soft">optional</span></span><input id="country" maxlength="2" pattern="[A-Za-z]{{2}}" placeholder="the city's"></label>
+    <label for="lang">Idioma<input id="lang" value="pt" maxlength="2" pattern="[A-Za-z]{{2}}"></label>
+    <label for="country"><span>País <span class="soft">opcional</span></span><input id="country" maxlength="2" pattern="[A-Za-z]{{2}}" placeholder="conforme a cidade"></label>
   </div></details>
-  <details><summary>Advanced options</summary><div class="body">
-    <label for="depth">Depth<input id="depth" type="number" min="1" max="1000" value="5">
-      <span class="soft">About 20 places each.</span></label>
-    <label for="max_time">Time limit, seconds<input id="max_time" type="number" min="1" max="86400" value="600"></label>
-    <label for="reviews">Reviews per place<input id="reviews" type="number" min="0" max="5" value="0">
-      <span class="soft">0 to 5; about 2-4 s more per place.</span></label>
-    <label class="chip wide"><input type="checkbox" id="verify"> Check each email's domain (MX record) and drop the ones that do not exist</label>
+  <details><summary>Opções avançadas</summary><div class="body">
+    <label for="depth">Profundidade<input id="depth" type="number" min="1" max="1000" value="5">
+      <span class="soft">Aproximadamente 20 estabelecimentos por etapa.</span></label>
+    <label for="max_time">Limite de tempo (segundos)<input id="max_time" type="number" min="1" max="86400" value="600"></label>
+    <label for="reviews">Avaliações por empresa<input id="reviews" type="number" min="0" max="5" value="0">
+      <span class="soft">De 0 a 5; cerca de 2 a 4 segundos adicionais por empresa.</span></label>
+    <label class="chip wide"><input type="checkbox" id="verify"> Verificar o domínio de cada e-mail (registro MX) e descartar domínios inexistentes</label>
   </div></details>
   <details><summary>Proxies</summary><div class="body">
-    <label class="wide" for="proxies">One per line
-      <textarea id="proxies" rows="3" autocomplete="off" placeholder="e.g. http://user:pass@proxy.example.com:8000"></textarea>
-      <span class="soft">http:// or https://, with or without user:pass; socks5:// without a login. Searches take turns,
-      and one Google refuses goes through the next. Passwords show as ***.</span></label>
+    <label class="wide" for="proxies">Um endereço por linha
+      <textarea id="proxies" rows="3" autocomplete="off" placeholder="Ex.: http://usuario:senha@proxy.example.com:8000"></textarea>
+      <span class="soft">http:// ou https://, com ou sem usuário e senha; socks5:// sem autenticação. Os termos alternam entre os proxies,
+      e uma pesquisa recusada pelo Google usa o próximo endereço. Senhas aparecem como ***.</span></label>
   </div></details>
-  <div class="go"><button class="primary" id="go">Start scraping</button><p id="msg" role="status" aria-live="polite"></p></div>
-  <label id="keybox" for="key" hidden>API key (SCRAPER_API_KEY)<input id="key" type="password" autocomplete="off"></label>
+  <div class="go"><button class="primary" id="go">Iniciar coleta</button><p id="msg" role="status" aria-live="polite"></p></div>
+  <label id="keybox" for="key" hidden>Chave da API (SCRAPER_API_KEY)<input id="key" type="password" autocomplete="off"></label>
 </form></section>
-<section aria-labelledby="h-jobs"><h2 id="h-jobs">Jobs</h2>
-<div class="scroll"><table><thead><tr><th>Search</th><th>Created</th><th>Status</th><th>Results</th></tr></thead>
+<section aria-labelledby="h-jobs"><h2 id="h-jobs">Coletas</h2>
+<div class="scroll"><table><thead><tr><th>Pesquisa</th><th>Criada em</th><th>Situação</th><th>Resultados</th></tr></thead>
 <tbody id="jobs"></tbody></table></div></section>
 </main>
 <script nonce="{nonce}">
@@ -474,7 +508,7 @@ $('key').addEventListener('change', () => {{ key = $('key').value; try {{ localS
 function api(method, path, body) {{
   const h = {{}}; if (key) h['X-API-Key'] = key; if (body) h['Content-Type'] = 'application/json';
   return fetch(path, {{method, headers: h, body: body ? JSON.stringify(body) : undefined}}).then(r => {{
-    if (r.status === 401) {{ $('keybox').hidden = false; throw new Error('This engine needs its API key: enter it below.'); }}
+    if (r.status === 401) {{ $('keybox').hidden = false; throw new Error('Este motor exige uma chave de API. Informe-a no campo abaixo.'); }}
     return r;
   }});
 }}
@@ -483,7 +517,7 @@ function cell(tr, text, cls) {{ const td = document.createElement('td'); td.text
 function button(td, label, fn) {{ const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.addEventListener('click', fn); td.appendChild(b); }}
 async function download(j, fmt) {{
   const r = await api('GET', '/api/v1/jobs/' + j.ID + '/download' + (fmt === 'json' ? '?format=json' : ''));
-  if (!r.ok) return say('No results yet for this job.', 'bad');
+  if (!r.ok) return say('Ainda não há resultados para esta coleta.', 'bad');
   const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob());
   a.download = fileName(j) + '.' + fmt; document.body.appendChild(a); a.click(); a.remove();
 }}
@@ -492,19 +526,19 @@ function fileName(j) {{  // "bakery-in-portland-or-c063a815": after the search, 
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
   return (s || 'results') + '-' + j.ID.slice(0, 8);
 }}
-const LABEL = {{pending: 'waiting', working: 'working', ok: 'done', failed: 'failed'}};
+const LABEL = {{pending: 'aguardando', working: 'em andamento', ok: 'concluída', failed: 'falhou'}};
 function progress(j) {{
   const p = j.Progress || {{}}, name = LABEL[j.Status] || j.Status;
-  if (j.Status === 'pending') return p.keywords_done ? name + ' (resumes at keyword ' + (p.keywords_done + 1) + ')' : name;
-  if (j.Status !== 'working') return name + (p.places ? ' · ' + p.places + ' places' : '');
-  const stage = {{search: 'keyword ' + Math.min(p.keywords_done + 1, p.keywords_total) + ' of ' + p.keywords_total,
-    reviews: 'reading reviews' + (p.reviews_total ? ' ' + p.reviews_done + ' of ' + p.reviews_total : ''),
-    websites: 'checking websites'}}[p.stage] || p.stage || '';
-  return name + ' · ' + stage + ' · ' + (p.places || 0) + ' places';
+  if (j.Status === 'pending') return p.keywords_done ? name + ' (retomará no termo ' + (p.keywords_done + 1) + ')' : name;
+  if (j.Status !== 'working') return name + (p.places ? ' · ' + p.places + ' empresas' : '');
+  const stage = {{search: 'termo ' + Math.min(p.keywords_done + 1, p.keywords_total) + ' de ' + p.keywords_total,
+    reviews: 'lendo avaliações' + (p.reviews_total ? ' ' + p.reviews_done + ' de ' + p.reviews_total : ''),
+    websites: 'verificando sites'}}[p.stage] || p.stage || '';
+  return name + ' · ' + stage + ' · ' + (p.places || 0) + ' empresas';
 }}
 async function remove(j) {{
-  if (!confirm('Delete this job and its results?')) return;
-  const r = await api('DELETE', '/api/v1/jobs/' + j.ID); say(r.ok ? 'Deleted.' : 'Could not delete it.', r.ok ? 'ok' : 'bad'); load();
+  if (!confirm('Excluir esta coleta e seus resultados?')) return;
+  const r = await api('DELETE', '/api/v1/jobs/' + j.ID); say(r.ok ? 'Excluída.' : 'Não foi possível excluir.', r.ok ? 'ok' : 'bad'); load();
 }}
 async function load() {{
   try {{
@@ -521,14 +555,14 @@ async function load() {{
       if (more.length) {{ const c = document.createElement('div'); c.className = 'count'; c.textContent = more.join(' · '); st.appendChild(c); }}
       if (j.Status === 'working') {{
         const bar = document.createElement('progress'); bar.max = 100; bar.value = (j.Progress || {{}}).percent || 0;
-        bar.setAttribute('aria-label', 'Progress of ' + j.Name); st.appendChild(bar);
+        bar.setAttribute('aria-label', 'Progresso de ' + j.Name); st.appendChild(bar);
       }}
       const act = cell(tr, ''), row = document.createElement('div'); row.className = 'row'; act.appendChild(row);
       if (j.Status !== 'pending' || (j.Progress || {{}}).places) {{ button(row, 'CSV', () => download(j, 'csv')); button(row, 'JSON', () => download(j, 'json')); }}
-      button(row, 'Delete', () => remove(j));
+      button(row, 'Excluir', () => remove(j));
       tb.appendChild(tr);
     }}
-    if (!list.length) {{ const tr = document.createElement('tr'); cell(tr, 'No jobs yet. Start a search above.', 'soft').colSpan = 4; tb.appendChild(tr); }}
+    if (!list.length) {{ const tr = document.createElement('tr'); cell(tr, 'Ainda não há coletas. Inicie uma pesquisa acima.', 'soft').colSpan = 4; tb.appendChild(tr); }}
   }} catch (e) {{ say(e.message, 'bad'); }}
 }}
 const TYPES = {types};
@@ -537,7 +571,7 @@ function tags(box, list) {{  // each pick is a button; pressing it removes the p
   box.replaceChildren();
   list.forEach((v, i) => {{
     const b = document.createElement('button'), text = v.label || v; b.type = 'button'; b.className = 'tag';
-    b.textContent = text + ' ×'; b.setAttribute('aria-label', 'Remove ' + text);
+    b.textContent = text + ' ×'; b.setAttribute('aria-label', 'Remover ' + text);
     b.addEventListener('click', () => {{ list.splice(i, 1); tags(box, list); }}); box.appendChild(b);
   }});
 }}
@@ -568,7 +602,7 @@ function combo(input, box, source, choose) {{  // a box that takes only picks fr
     }} else if (ev.key === 'Enter') {{  // never submits the form
       ev.preventDefault();
       if (active >= 0) pick(active);
-      else if (input.value.trim() && !stale) say('"' + input.value.trim() + '" is not in the list. Type a few letters, then pick from it.', 'bad');
+      else if (input.value.trim() && !stale) say('"' + input.value.trim() + '" não aparece na lista. Digite algumas letras e selecione uma opção.', 'bad');
     }} else if (ev.key === 'Escape') show([]);
   }});
 }}
@@ -608,29 +642,29 @@ combo($('where'), $('where-opts'), (q, show) => {{  // the biggest cities that s
 $('f').addEventListener('submit', async ev => {{
   ev.preventDefault();
   for (const box of [$('what'), $('where')]) if (box.value.trim()) {{ box.focus();
-    return say('"' + box.value.trim() + '" is not picked yet. Pick it from the list, or clear the box.', 'bad'); }}
+    return say('"' + box.value.trim() + '" ainda não foi selecionado. Escolha na lista ou limpe o campo.', 'bad'); }}
   if (!whats.length || !wheres.length) {{ (whats.length ? $('where') : $('what')).focus();
-    return say('Pick at least one business type and one city from the lists.', 'bad'); }}
+    return say('Escolha pelo menos um tipo de empresa e uma cidade nas listas.', 'bad'); }}
   const proxies = $('proxies').value.split('\\n').map(s => s.trim()).filter(Boolean);
-  const go = $('go'); go.disabled = true; go.textContent = 'Starting…';
+  const go = $('go'); go.disabled = true; go.textContent = 'Iniciando…';
   let started = 0;
   try {{
     for (const c of wheres) {{  // one job per city, its map centred on that city
-      const keywords = whats.map(w => w + ' in ' + c.label);
-      const body = {{name: Array.from(keywords[0] + (keywords.length > 1 ? ' +' + (keywords.length - 1) + ' more' : '')).slice(0, 200).join(''),
+      const keywords = whats.map(w => w + ' em ' + c.label);
+      const body = {{name: Array.from(keywords[0] + (keywords.length > 1 ? ' +' + (keywords.length - 1) + ' adicionais' : '')).slice(0, 200).join(''),
         keywords, lang: $('lang').value.trim().toLowerCase(), country: $('country').value.trim().toLowerCase() || c.country.toLowerCase(),
         lat: c.lat, lon: c.lon, zoom: +$('zoom').value || 15, depth: +$('depth').value, max_time: +$('max_time').value,
         email: $('email').checked, socials: $('socials').checked, browser_sites: $('browser-sites').checked, verify_emails: $('verify').checked,
         reviews_max: +$('reviews').value || 0}};
       if (proxies.length) body.proxies = proxies;
       const r = await api('POST', '/api/v1/jobs', body), d = await r.json();
-      if (!r.ok) return say('Not started' + (started ? ' after ' + started + ' job(s)' : '') + ': ' + d.message, 'bad');
+      if (!r.ok) return say('Não iniciada' + (started ? ' após ' + started + ' coleta(s)' : '') + ': ' + d.message, 'bad');
       started++;
     }}
-    say(started === 1 ? 'Started. It runs in the background, and the list below updates by itself.'
-      : 'Started ' + started + ' jobs, one per city. They run one after another, and the list below updates by itself.', 'ok');
+    say(started === 1 ? 'Coleta iniciada. A lista abaixo será atualizada automaticamente.'
+      : 'Iniciadas ' + started + ' coletas, uma por cidade. Elas serão executadas em sequência e a lista será atualizada automaticamente.', 'ok');
   }} catch (e) {{ say(e.message, 'bad'); }}
-  finally {{ go.disabled = false; go.textContent = 'Start scraping'; load(); }}
+  finally {{ go.disabled = false; go.textContent = 'Iniciar coleta'; load(); }}
 }});
 load(); setInterval(load, 3000);
 (function () {{  // update notice: GitHub's latest release once a day, shown only when it is newer than this copy
