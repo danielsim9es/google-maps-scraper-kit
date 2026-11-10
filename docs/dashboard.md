@@ -16,12 +16,11 @@ O dashboard foi desenvolvido para o fork [`danielsim9es/google-maps-scraper-kit`
 
 > **Sem dados simulados.** Um banco vazio mostra contadores `0`, mapas vazios e orientações para iniciar a coleta. O backend examina, de forma determinística, os arquivos `.engine/data/<job>.csv` que o motor criou.
 
-## Instalação no fork
+## Instalação no fork (já integrado)
 
-Copie os arquivos novos deste pacote preservando os caminhos e execute na raiz do repositório:
+O dashboard já está integrado à branch principal deste fork. Na raiz do repositório, execute:
 
 ```bash
-python3 scripts/install_dashboard_patch.py
 python3 engine/test_dashboard.py
 python3 engine/test_engine.py
 python3 scripts/engine.py start

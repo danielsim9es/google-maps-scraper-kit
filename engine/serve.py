@@ -260,7 +260,7 @@ JOB_PROPS["fast_mode"]["description"] = "Aceito, porém não utilizado"
 def docs_page(nonce):
     """/api/docs: OPENAPI as a plain HTML page (no scripts, nothing loaded from elsewhere)."""
     e = html.escape
-    out = [f"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+    out = [f"<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\">"
            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Documentação da API</title>"
            f"<style nonce=\"{nonce}\">:root {{ color-scheme: light dark; }} body {{ margin: 0 auto; max-width: 960px; "
            "padding: 16px; font: 15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; }} code {{ font-size: .95em; }} "
@@ -566,6 +566,9 @@ async function load() {{
   }} catch (e) {{ say(e.message, 'bad'); }}
 }}
 const TYPES = {types};
+// Sugestões brasileiras na interface; mantém intactas as categorias originais e o contrato da API.
+const TIPOS_PT = ["Barbearias","Restaurantes","Padarias","Dentistas","Clínicas odontológicas","Salões de beleza","Cafeterias","Hotéis","Farmácias","Academias","Escritórios de contabilidade","Imobiliárias","Pet shops","Oficinas mecânicas","Empresas de limpeza","Supermercados","Pizzarias","Lojas de roupas","Advogados","Hospitais","Mercados","Eletricistas","Encanadores","Consultórios médicos","Escolas","Lanchonetes","Clínicas médicas","Agências de publicidade","Escritórios de advocacia","Transportadoras","Autopeças","Lava-rápidos","Óticas","Lavanderias","Construtoras","Lojas de móveis","Clínicas veterinárias"];
+for (const nome of TIPOS_PT) if (!TYPES.some(t => t.toLocaleLowerCase('pt-BR') === nome.toLocaleLowerCase('pt-BR'))) TYPES.unshift(nome);
 const whats = [], wheres = [];  // picked business types, picked cities {{label, lat, lon, country}}
 function tags(box, list) {{  // each pick is a button; pressing it removes the pick
   box.replaceChildren();

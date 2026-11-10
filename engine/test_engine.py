@@ -1242,6 +1242,7 @@ class ApiP3(Server):
         code, body, r = self.call("GET", "/api/docs")
         page, csp = body.decode(), r.getheader("Content-Security-Policy")
         self.assertEqual((code, r.getheader("Content-Type")), (200, "text/html; charset=utf-8"))
+        self.assertIn('lang="pt-BR"', page)
         self.assertNotIn("<script", page)
         nonce = re.search(r"nonce-([^']+)'", csp).group(1)
         self.assertIn(f'<style nonce="{nonce}">', page)
@@ -1256,6 +1257,8 @@ class ApiP3(Server):
         self.assertIn('<input id="where" role="combobox"', ui)
         self.assertIn("const TYPES = " + json.dumps(serve.TYPES) + ";", ui)  # the kit's own types work offline
         self.assertIn(serve.CATEGORIES, ui)  # Google's category names: loaded by the browser from GitHub, pinned
+        self.assertIn('lang="pt-BR"', ui)
+        self.assertIn('const TIPOS_PT = ', ui)  # segmento em português sem quebrar categorias originais
         self.assertRegex(serve.CATEGORIES, r"/[0-9a-f]{40}/")
         front = ui.split("<details>")[0]  # what a beginner sees before opening a section
         self.assertIn('<input type="checkbox" id="email" checked>', front)
